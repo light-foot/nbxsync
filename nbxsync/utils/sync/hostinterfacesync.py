@@ -151,3 +151,25 @@ class HostInterfaceSync(ZabbixSyncBase):
             return []
 
         return found
+
+    def find_by_name(self):
+        """
+        Find an existing Zabbix interface on this host by IP, type, and port.
+        Zabbix host interfaces have no 'name' field, so the base-class name query
+        always returns nothing. This replaces it with a lookup that actually works.
+        When exactly one match is found, the correct interfaceid is saved to NetBox
+        immediately (mirrors the explicit-save pattern in find_by_id).
+        """
+        hostid = self.context.get('hostid')
+        if not hostid or not self.obj.ip_id:
+            return []
+        ipaddr = str(IPAddress.objects.get(id=self.obj.ip_id).address.ip)
+        matches = self.api_object().get(
+            hostids=hostid,
+            filter={"ip": ipaddr, "type": self.obj.type, "port": str(self.obj.port)},
+            output="extend",
+        )
+        if len(matches) == 1:
+            self.obj.interfaceid = int(matches[0]['interfaceid'])
+            self.obj.save(update_fields=['interfaceid'])
+        return matches
