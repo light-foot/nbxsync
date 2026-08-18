@@ -8,6 +8,9 @@ from nbxsync.views import *
 
 urlpatterns = [
     path('', ZabbixServerListView.as_view(), name='zabbixserver_list'),
+    # Actions
+    path('actions/configgroup-quickassign/', ConfigGroupQuickAssignView.as_view(), name='configgroup_quickassign'),
+    path('zabbixconfigurationgroup/<int:pk>/bulk-assign/', ConfigGroupBulkAssignView.as_view(), name='zabbixconfigurationgroup_bulkassign'),
     # Zabbix Server
     path('zabbixserver/', ZabbixServerListView.as_view(), name='zabbixserver_list'),
     path('zabbixserver/add/', ZabbixServerEditView.as_view(), name='zabbixserver_add'),

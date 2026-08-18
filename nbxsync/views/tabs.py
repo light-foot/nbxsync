@@ -7,8 +7,26 @@ from virtualization.models import Cluster, ClusterType, VirtualMachine
 
 from nbxsync.filtersets import ZabbixTemplateFilterSet, ZabbixMacroFilterSet
 from nbxsync.mixins import ZabbixTabMixin
-from nbxsync.models import ZabbixServer, ZabbixMacro, ZabbixHostInterface, ZabbixTemplate, ZabbixServerAssignment, ZabbixMaintenanceObjectAssignment, ZabbixHostInventory, ZabbixConfigurationGroupAssignment
+from nbxsync.models import ZabbixConfigurationGroup, ZabbixServer, ZabbixMacro, ZabbixHostInterface, ZabbixTemplate, ZabbixServerAssignment, ZabbixMaintenanceObjectAssignment, ZabbixHostInventory, ZabbixConfigurationGroupAssignment
 from nbxsync.tables import ZabbixTemplateTable, ZabbixMacroTable, ZabbixHostInterfaceObjectViewTable, ZabbixServerAssignmentObjectViewTable, ZabbixMaintenanceObjectAssignmentDetailViewTable
+
+
+def build_configgroup_context(instance, object_ct):
+    """
+    All configuration group memberships of the object plus the groups still
+    available for the inline quick assign form on the Zabbix tab.
+    """
+    assignments = list(
+        ZabbixConfigurationGroupAssignment.objects.filter(
+            assigned_object_type=object_ct, assigned_object_id=instance.pk
+        ).order_by('pk').select_related('zabbixconfigurationgroup')
+    )
+    assigned_ids = [a.zabbixconfigurationgroup_id for a in assignments]
+    available = ZabbixConfigurationGroup.objects.exclude(pk__in=assigned_ids).order_by('name')
+    return {
+        'configurationgroup_assignments': assignments,
+        'configurationgroup_available': available,
+    }
 
 
 @register_model_view(ZabbixServer, name='zabbixserver_templates', path='templates')
@@ -101,7 +119,6 @@ class ZabbixDeviceTabView(ZabbixTabMixin, ObjectView):
         zabbixserver_assignments = ZabbixServerAssignment.objects.filter(assigned_object_type=object_ct, assigned_object_id=instance.pk).select_related('assigned_object_type')
         maintenance_objectassignments = ZabbixMaintenanceObjectAssignment.objects.filter(assigned_object_type=object_ct, assigned_object_id=instance.pk).select_related('assigned_object_type')
         hostinventory_assignment = ZabbixHostInventory.objects.filter(assigned_object_type=object_ct, assigned_object_id=instance.pk).first()
-        configurationgroup_assignment = ZabbixConfigurationGroupAssignment.objects.filter(assigned_object_type=object_ct, assigned_object_id=instance.pk).first()
 
         if hostinterface_assignments:
             hostinterface_assignment_table = ZabbixHostInterfaceObjectViewTable(hostinterface_assignments)
@@ -125,7 +142,7 @@ class ZabbixDeviceTabView(ZabbixTabMixin, ObjectView):
         context['zabbixserver_assignments_table'] = zabbixserver_assignments_table
         context['maintenance_objectassignment_table'] = maintenance_objectassignment_table
         context['hostinventory_assignment'] = hostinventory_assignment
-        context['configurationgroup_assignment'] = configurationgroup_assignment
+        context.update(build_configgroup_context(instance, object_ct))
         return context
 
 
@@ -144,7 +161,6 @@ class ZabbixVirtualMachineTabView(ZabbixTabMixin, ObjectView):
         zabbixserver_assignments = ZabbixServerAssignment.objects.filter(assigned_object_type=object_ct, assigned_object_id=instance.pk).select_related('assigned_object_type')
         maintenance_objectassignments = ZabbixMaintenanceObjectAssignment.objects.filter(assigned_object_type=object_ct, assigned_object_id=instance.pk).select_related('assigned_object_type')
         hostinventory_assignment = ZabbixHostInventory.objects.filter(assigned_object_type=object_ct, assigned_object_id=instance.pk).first()
-        configurationgroup_assignment = ZabbixConfigurationGroupAssignment.objects.filter(assigned_object_type=object_ct, assigned_object_id=instance.pk).first()
 
         if hostinterface_assignments:
             hostinterface_assignment_table = ZabbixHostInterfaceObjectViewTable(hostinterface_assignments)
@@ -168,7 +184,7 @@ class ZabbixVirtualMachineTabView(ZabbixTabMixin, ObjectView):
         context['zabbixserver_assignments_table'] = zabbixserver_assignments_table
         context['maintenance_objectassignment_table'] = maintenance_objectassignment_table
         context['hostinventory_assignment'] = hostinventory_assignment
-        context['configurationgroup_assignment'] = configurationgroup_assignment
+        context.update(build_configgroup_context(instance, object_ct))
 
         return context
 
@@ -188,7 +204,6 @@ class ZabbixVirtualDeviceContextTabView(ZabbixTabMixin, ObjectView):
         zabbixserver_assignments = ZabbixServerAssignment.objects.filter(assigned_object_type=object_ct, assigned_object_id=instance.pk).select_related('assigned_object_type')
         maintenance_objectassignments = ZabbixMaintenanceObjectAssignment.objects.filter(assigned_object_type=object_ct, assigned_object_id=instance.pk).select_related('assigned_object_type')
         hostinventory_assignment = ZabbixHostInventory.objects.filter(assigned_object_type=object_ct, assigned_object_id=instance.pk).first()
-        configurationgroup_assignment = ZabbixConfigurationGroupAssignment.objects.filter(assigned_object_type=object_ct, assigned_object_id=instance.pk).first()
 
         if hostinterface_assignments:
             hostinterface_assignment_table = ZabbixHostInterfaceObjectViewTable(hostinterface_assignments)
@@ -212,7 +227,7 @@ class ZabbixVirtualDeviceContextTabView(ZabbixTabMixin, ObjectView):
         context['zabbixserver_assignments_table'] = zabbixserver_assignments_table
         context['maintenance_objectassignment_table'] = maintenance_objectassignment_table
         context['hostinventory_assignment'] = hostinventory_assignment
-        context['configurationgroup_assignment'] = configurationgroup_assignment
+        context.update(build_configgroup_context(instance, object_ct))
 
         return context
 

@@ -1,0 +1,25 @@
+{% extends 'base/layout.html' %}
+{% load form_helpers %}
+{% load i18n %}
+
+{% block title %}{% trans "Bulk Assign Members" %}: {{ object.name }}{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col col-md-8 offset-md-2">
+            <form method="post">
+                {% csrf_token %}
+                <div class="card">
+                    <h5 class="card-header">{% trans "Bulk Assign Members to" %} {{ object.name }}</h5>
+                    <div class="card-body">
+                        {% render_form form %}
+                    </div>
+                </div>
+                <div class="text-end my-3">
+                    <a class="btn btn-outline-secondary" href="{{ return_url }}">{% trans "Cancel" %}</a>
+                    <button type="submit" class="btn btn-primary">{% trans "Assign" %}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
