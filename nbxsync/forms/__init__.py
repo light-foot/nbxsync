@@ -20,3 +20,4 @@ from .zabbixmaintenanceobjectassignment import *
 from .zabbixmaintenancetagassignment import *
 from .zabbixconfigurationgroup import *
 from .zabbixconfigurationgroupassignment import *
+from .zabbixconfigurationgroupbulkassign import *

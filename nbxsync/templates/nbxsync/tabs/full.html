@@ -94,47 +94,39 @@
                                 </td>
                             </tr>
                             <tr class="odd">
-                                <td>Configuration Group</td>
+                                <td>Configuration Groups</td>
                                 <td>
-                                    {% if configurationgroup_assignment %}
-                                        <a href="{% url 'plugins:nbxsync:zabbixconfigurationgroup' pk=configurationgroup_assignment.zabbixconfigurationgroup.pk %}">{{ configurationgroup_assignment.zabbixconfigurationgroup }}</a>
-                                    {% else %}
+                                    {% for cga in configurationgroup_assignments %}
+                                        <div class="d-flex align-items-center mb-1">
+                                            <a href="{% url 'plugins:nbxsync:zabbixconfigurationgroup' pk=cga.zabbixconfigurationgroup.pk %}">{{ cga.zabbixconfigurationgroup }}</a>
+                                            {% if perms.nbxsync.delete_zabbixconfigurationgroupassignment %}
+                                                <a class="btn btn-sm btn-ghost-danger ms-1"
+                                                   href="{% url 'plugins:nbxsync:zabbixconfigurationgroupassignment_delete' pk=cga.pk %}?&return_url={{ request.path }}"
+                                                   title="Remove from group">
+                                                    <i class="mdi mdi-trash-can-outline"></i>
+                                                </a>
+                                            {% endif %}
+                                        </div>
+                                    {% empty %}
                                         -
-                                    {% endif %}
+                                    {% endfor %}
                                 </td>
                                 <td class="noprint p-1 text-end text-nowrap">
-                                    {% if perms.nbxsync.add_zabbixconfigurationgroupassignment %}
-                                        {% if configurationgroup_assignment %}
-                                            <span class="btn-group dropdown">
-                                                <a class="btn btn-sm btn-warning"
-                                                   href="{% url 'plugins:nbxsync:zabbixconfigurationgroupassignment_edit' pk=configurationgroup_assignment.pk %}?&return_url={{ request.path }}"
-                                                   type="button"
-                                                   aria-label="Edit">
-                                                    <i class="mdi mdi-pencil"></i>
-                                                </a>
-                                                <a class="btn btn-sm btn-warning dropdown-toggle"
-                                                   type="button"
-                                                   data-bs-toggle="dropdown"
-                                                   style="padding-left: 2px"
-                                                   aria-expanded="false">
-                                                    <span class="visually-hidden">Toggle Dropdown</span>
-                                                </a>
-                                                <ul class="dropdown-menu" style="">
-                                                    <li>
-                                                        <a class="dropdown-item"
-                                                           href="{% url 'plugins:nbxsync:zabbixconfigurationgroupassignment_delete' pk=configurationgroup_assignment.pk %}?&return_url={{ request.path }}">
-                                                            <i class="mdi mdi-trash-can-outline"></i> Delete
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                            </span>
-                                        {% else %}
-                                            <a href="{% url 'plugins:nbxsync:zabbixconfigurationgroupassignment_add' %}?assigned_object_type={{ content_type.pk }}&assigned_object_id={{ object.pk }}&return_url={{ request.path }}"
-                                               title="Add"
-                                               class="btn btn-sm btn-success">
+                                    {% if perms.nbxsync.add_zabbixconfigurationgroupassignment and configurationgroup_available %}
+                                        <form method="post" action="{% url 'plugins:nbxsync:configgroup_quickassign' %}" class="d-inline-flex align-items-center gap-1">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="assigned_object_type" value="{{ content_type.pk }}" />
+                                            <input type="hidden" name="assigned_object_id" value="{{ object.pk }}" />
+                                            <input type="hidden" name="return_url" value="{{ request.path }}" />
+                                            <select name="zabbixconfigurationgroup" class="form-select form-select-sm" style="max-width: 14rem">
+                                                {% for group in configurationgroup_available %}
+                                                    <option value="{{ group.pk }}">{{ group.name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <button type="submit" class="btn btn-sm btn-success" title="Assign">
                                                 <i class="mdi mdi-plus-thick" aria-hidden="true"></i>
-                                            </a>
-                                        {% endif %}
+                                            </button>
+                                        </form>
                                     {% endif %}
                                 </td>
                             </tr>
