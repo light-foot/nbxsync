@@ -1,4 +1,5 @@
 from .jobs import *
+from .configgroupactions import *
 from .tabs import *
 
 from .hostinfo import *
