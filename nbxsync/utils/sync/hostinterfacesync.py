@@ -169,6 +169,13 @@ class HostInterfaceSync(ZabbixSyncBase):
             filter={"ip": ipaddr, "type": self.obj.type, "port": str(self.obj.port)},
             output="extend",
         )
+
+        if self.obj.type == 2 and len(matches) > 1:  # SNMP with multiple candidates
+            if self.obj.snmp_version in (1, 2):
+                matches = [m for m in matches if m.get('details', {}).get('community') == self.obj.snmp_community]
+            elif self.obj.snmp_version == 3:
+                matches = [m for m in matches if m.get('details', {}).get('securityname') == self.obj.snmpv3_security_name]
+
         if len(matches) == 1:
             self.obj.interfaceid = int(matches[0]['interfaceid'])
             self.obj.save(update_fields=['interfaceid'])

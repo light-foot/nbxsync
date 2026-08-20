@@ -38,8 +38,8 @@ class SyncHostJob:
             if zabbix_status == ZabbixHostStatus.DELETED:
                 self.delete_host(assignment)
             else:
-                self.check_default_hostinterface(assignment)
                 self.sync_host(assignment)
+                self.check_default_hostinterface(assignment)
                 self.verify_hostinterfaces(assignment)
 
             if object_type == 'device' and zabbix_status != ZabbixHostStatus.DELETED and pluginsettings.trigger_dependencies.enabled:
