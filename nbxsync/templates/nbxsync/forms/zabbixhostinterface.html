@@ -129,6 +129,7 @@
             {% endfor %}
         </div>
     </div>
+    {% render_field form.tags %}
 {% endblock %}
 {% block javascript %}
     <script src="{% static 'nbxsync/js/zabbixhostinterface-form.js' %}" defer></script>
