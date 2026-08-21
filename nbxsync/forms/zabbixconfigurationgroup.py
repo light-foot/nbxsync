@@ -15,13 +15,17 @@ class ZabbixConfigurationGroupForm(NetBoxModelForm):
     name = forms.CharField(label=_('Name'), max_length=200, required=True)
     description = forms.CharField(label=_('Description'), max_length=200, required=False)
 
-    fieldsets = (FieldSet('name', 'description', name=_('Generic')),)
+    fieldsets = (
+        FieldSet('name', 'description', name=_('Generic')),
+        FieldSet('tags', name=_('Tags')),
+    )
 
     class Meta:
         model = ZabbixConfigurationGroup
         fields = (
             'name',
             'description',
+            'tags',
         )
 
 

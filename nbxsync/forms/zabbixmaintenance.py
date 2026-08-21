@@ -26,6 +26,7 @@ class ZabbixMaintenanceForm(NetBoxModelForm):
         FieldSet('maintenanceid', 'maintenance_type', 'tags_evaltype', name=_('Zabbix')),
         FieldSet('active_since', 'active_till', name=_('Window')),
         FieldSet('zabbixserver', name=_('Assignment')),
+        FieldSet('tags', name=_('Tags')),
     )
 
     class Meta:
@@ -38,6 +39,7 @@ class ZabbixMaintenanceForm(NetBoxModelForm):
             'description',
             'maintenance_type',
             'tags_evaltype',
+            'tags',
         )
 
     def clean(self):

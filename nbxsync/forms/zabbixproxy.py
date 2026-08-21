@@ -80,6 +80,7 @@ class ZabbixProxyForm(NetBoxModelForm):
             'timeout_telnet_agent',
             'timeout_script',
             'timeout_browser',
+            'tags',
         )
 
 

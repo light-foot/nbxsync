@@ -30,6 +30,7 @@ class ZabbixMacroForm(NetBoxModelForm):
             ),
             name=_('Assignment'),
         ),
+        FieldSet('tags', name=_('Tags')),
     )
 
     class Meta:
@@ -41,6 +42,7 @@ class ZabbixMacroForm(NetBoxModelForm):
             'type',
             'zabbixserver',
             'zabbixtemplate',
+            'tags',
         )
 
     @property

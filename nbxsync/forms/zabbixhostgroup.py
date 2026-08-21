@@ -17,7 +17,10 @@ class ZabbixHostgroupForm(NetBoxModelForm):
     description = forms.CharField(label=_('Description'), required=False, widget=forms.Textarea(attrs={'rows': 1, 'cols': 40}))
     zabbixserver = DynamicModelChoiceField(queryset=ZabbixServer.objects.all(), required=True, selector=True, label=_('Zabbix Server'))
 
-    fieldsets = (FieldSet('name', 'description', 'value', 'groupid', 'zabbixserver'),)
+    fieldsets = (
+        FieldSet('name', 'description', 'value', 'groupid', 'zabbixserver'),
+        FieldSet('tags', name=_('Tags')),
+    )
 
     class Meta:
         model = ZabbixHostgroup
@@ -27,6 +30,7 @@ class ZabbixHostgroupForm(NetBoxModelForm):
             'groupid',
             'value',
             'zabbixserver',
+            'tags',
         )
 
 

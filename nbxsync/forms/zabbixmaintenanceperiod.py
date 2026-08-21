@@ -63,6 +63,7 @@ class ZabbixMaintenancePeriodForm(NetBoxModelForm):
             'day',
             'month',
             'month_date',
+            'tags',
         )
 
     @staticmethod

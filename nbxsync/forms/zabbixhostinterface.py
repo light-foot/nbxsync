@@ -140,6 +140,7 @@ class ZabbixHostInterfaceForm(NetBoxModelForm):
             'ipmi_password',
             'ipmi_privilege',
             'ipmi_username',
+            'tags',
         )
 
     @property
