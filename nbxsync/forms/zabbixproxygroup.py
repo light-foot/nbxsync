@@ -26,6 +26,7 @@ class ZabbixProxyGroupForm(NetBoxModelForm):
             'description',
             'min_online',
             'failover_delay',
+            'tags',
         )
 
 

@@ -36,6 +36,7 @@ class ZabbixServerForm(NetBoxModelForm):
             'validate_certs',
             'token',
             'sync_enabled',
+            'tags',
         )
 
 

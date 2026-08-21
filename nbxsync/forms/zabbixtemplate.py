@@ -21,7 +21,7 @@ class ZabbixTemplateForm(NetBoxModelForm):
 
     class Meta:
         model = ZabbixTemplate
-        fields = ('name', 'zabbixserver', 'templateid', 'interface_requirements')
+        fields = ('name', 'zabbixserver', 'templateid', 'interface_requirements', 'tags')
 
 
 class ZabbixTemplateFilterForm(NetBoxModelFilterSetForm):

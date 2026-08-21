@@ -28,6 +28,7 @@ class ZabbixTagForm(NetBoxModelForm):
             'description',
             'tag',
             'value',
+            'tags',
         )
 
 
